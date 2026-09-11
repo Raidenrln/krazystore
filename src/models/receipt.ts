@@ -1,7 +1,6 @@
 type ProductReceiptModel = {
   id: string
-  storebelong: string
-  price: number
+  quantity: number
 }
 
 export type ReceiptModel = {

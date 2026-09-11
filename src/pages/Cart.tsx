@@ -2,17 +2,30 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import { useContext } from "react";
 import { CartContext } from "../context/cart/CartContext";
 import { ProductContext } from "../context/products/ProductsContext";
-
+import { ReceiptContext } from "../context/receipt/ReceiptContext";
+import { v4 as uuidv4 } from "uuid";
+import type { ReceiptModel } from "../models/receipt";
 const Cart = () => {
   const { cartItem, increaseQuantity, decreaseQuantity, removeFromCart } = useContext(CartContext)!;
   const { products } = useContext(ProductContext)!;
-
+  const { addReceipt } = useContext(ReceiptContext)!;
   const carthasItem = cartItem.length;
 
   const total = cartItem.reduce((sum, item) => {
     const product = products.find((p) => p.id === item.id);
     return product ? sum + product.price * item.quantity : sum;
   }, 0);
+
+  const handleCheckout = () => {
+    const now = new Date().toLocaleDateString();
+    const checkingOut: ReceiptModel = {
+      id: uuidv4(),
+      createdAt: now,
+      products: cartItem
+    }
+
+    addReceipt(checkingOut);
+  }
 
   return (
     <main className="min-h-screen w-full">
@@ -112,6 +125,7 @@ const Cart = () => {
             <button
               type="button"
               className="mt-3 w-full rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white transition hover:bg-violet-500"
+              onClick={handleCheckout}
             >
               Check Out
             </button>

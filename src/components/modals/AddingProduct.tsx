@@ -31,6 +31,7 @@ const AddingProduct = ({ onClose }: AddingProductProps) => {
       priceHistory: [],
     };
     addingProduct(newProduct, chooseStore);
+    onClose();
   };
   return (
     <main className="w-full">
@@ -88,11 +89,7 @@ const AddingProduct = ({ onClose }: AddingProductProps) => {
                 Choose store
               </option>
               {stores.map((s) => (
-                <option
-                  key={s.id}
-                  value={s.id}
-                  className="text-(--text-muted) bg-(--bg-panel)"
-                >
+                <option key={s.id} value={s.id} className="text-(--text-muted) bg-(--bg-panel)">
                   {s.name}
                 </option>
               ))}

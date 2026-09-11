@@ -7,6 +7,7 @@ interface CartContextModel {
   increaseQuantity: (id: string) => void;
   decreaseQuantity: (id: string) => void;
   removeFromCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 export const CartContext = createContext<CartContextModel | null>(null);

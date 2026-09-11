@@ -1,6 +1,12 @@
 import { Eye, Trash } from "lucide-react";
+import { useContext } from "react";
+import { ReceiptContext } from "../context/receipt/ReceiptContext";
+import { ProductContext } from "../context/products/ProductsContext";
 
 const Expenses = () => {
+  const { products } = useContext(ProductContext)!;
+  const { receipt } = useContext(ReceiptContext)!;
+
   return (
     <main>
       <div className="sm:hidden w-full items-center flex flex-col p-4 gap-4 pb-22">
@@ -10,27 +16,47 @@ const Expenses = () => {
             Tracked prices, check out, and keep every receipt.
           </p>
         </div>
+
         <div className="w-full bg-(--bg-panel) border border-(--border-light) rounded-2xl">
           <div className="w-full p-4 flex gap-1.5 items-center">
             <span className="font-bold text-[14px] text-white">Receipts</span>
+
             <div className="min-w-6 h-6 px-1 flex items-center justify-center rounded-full bg-(--primary-color) shrink-0">
-              <span className="text-[10px] leading-none">1</span>
+              <span className="text-[10px] leading-none">{receipt.length}</span>
             </div>
           </div>
+
           <hr className="w-full border-t border-(--border-light)" />
-          <div className="flex w-full justify-between p-4">
-            <div className="flex flex-col gap-2">
-              <span className="font-semibold text-[13px] text-white">REC-0000001</span>
-              <span className="text-(--text-muted) text-[12px]">
-                Aug 26, 2026, 9:11 PM • 1 item{" "}
-              </span>
-            </div>
-            <div className="flex gap-3 items-center">
-              <span className="text-[14px] text-white">₱16.00</span>
-              <Eye size={16} className="text-(--text-muted)" />
-              <Trash size={16} className="text-(--text-muted)" />
-            </div>
-          </div>
+
+          {receipt.map((r) => {
+            const total = r.products.reduce((sum, receiptProduct) => {
+              const product = products.find((p) => p.id === receiptProduct.id);
+
+              return sum + (product?.price ?? 0) * receiptProduct.quantity;
+            }, 0);
+
+            const totalQuantity = r.products.reduce((sum, product) => sum + product.quantity, 0);
+
+            return (
+              <div key={r.id} className="flex w-full justify-between p-4">
+                <div className="flex flex-col gap-2">
+                  <span className="font-semibold text-[13px] text-white">{r.id}</span>
+
+                  <span className="text-(--text-muted) text-[12px]">
+                    {r.createdAt} • {totalQuantity} items
+                  </span>
+                </div>
+
+                <div className="flex gap-3 items-center">
+                  <span className="text-[14px] text-white">₱{total.toFixed(2)}</span>
+
+                  <Eye size={16} className="text-(--text-muted)" />
+
+                  <Trash size={16} className="text-(--text-muted)" />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>

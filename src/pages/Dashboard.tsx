@@ -1,6 +1,9 @@
 import { Box, LockKeyholeOpen, ReceiptTextIcon, Store } from "lucide-react";
+import { useContext } from "react";
+import { StoreContext } from "../context/store/StoreContext";
 
 const Dashboard = () => {
+  const { stores } = useContext(StoreContext)!;
   return (
     <main className="min-h-screen w-full flex flex-col">
       {/* Mobile devices Dashboard */}
@@ -22,7 +25,7 @@ const Dashboard = () => {
                 <span className="text-[15px] text-[#9DAABBD]">Total stores</span>
                 <span className="text-[12px] text-(--text-muted)">Tracked stores</span>
               </div>
-              <span className="text-[17px]">1</span>
+              <span className="text-[17px]">{stores.length}</span>
             </div>
           </div>
           <div className="w-full gap-4 flex bg-(--bg-panel) items-center p-4 rounded-2xl border border-[#2A2E3D]">

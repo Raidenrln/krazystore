@@ -1,12 +1,26 @@
 import { Eye, Trash } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ReceiptContext } from "../context/receipt/ReceiptContext";
 import { ProductContext } from "../context/products/ProductsContext";
+import ShowMoreDetails from "../components/modals/ShowMoreDetails";
+import { useOutletContext } from "react-router-dom";
+
+interface NavbarContextType {
+  setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const Expenses = () => {
   const { products } = useContext(ProductContext)!;
   const { receipt } = useContext(ReceiptContext)!;
+  const [showDetails, setShowDetails] = useState(false);
+  const { setShowNavbar } = useOutletContext<NavbarContextType>();
+  const [receiptId, setReceiptId] = useState("");
 
+  const handleShowDetails = (id: string) => {
+    setReceiptId(id);
+    setShowDetails(true)
+    setShowNavbar(false)
+  }
   return (
     <main>
       <div className="sm:hidden w-full items-center flex flex-col p-4 gap-4 pb-22">
@@ -50,7 +64,7 @@ const Expenses = () => {
                 <div className="flex gap-3 items-center">
                   <span className="text-[14px] text-white">₱{total.toFixed(2)}</span>
 
-                  <Eye size={16} className="text-(--text-muted)" />
+                  <Eye onClick={() => handleShowDetails(r.id)} size={16} className="text-(--text-muted)" />
 
                   <Trash size={16} className="text-(--text-muted)" />
                 </div>
@@ -59,6 +73,12 @@ const Expenses = () => {
           })}
         </div>
       </div>
+
+      {showDetails && (
+        <div className="fixed inset-0">
+          <ShowMoreDetails receiptId={receiptId} onClose={() => setShowDetails(false)} openNav={() => setShowNavbar(true)}/>
+        </div>
+      )}
     </main>
   );
 };

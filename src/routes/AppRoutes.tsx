@@ -5,6 +5,7 @@ import Products from '../pages/Products'
 import Stores from '../pages/Stores'
 import Expenses from '../pages/Expenses'
 import Settings from '../pages/Settings'
+import Cart from '../pages/Cart'
 
 const AppRoutes = () => {
   return (
@@ -14,6 +15,7 @@ const AppRoutes = () => {
         <Route path="/stores" element={<Stores />} />
         <Route path="/products" element={<Products />} />
         <Route path="/expenses" element={<Expenses />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
     </Routes>

@@ -8,28 +8,52 @@
 @import "@fontsource/jetbrains-mono/400.css";
 
 :root {
+  /* Typography */
   --font-sans: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  --primary-color: #8158DF;
-  --primary-bg-color: #2A2546;
-  --bg-button: #2A2546;
-  --bg-panel: #181B24;
-  --open-stores: #31BD8B;
-  --open-bg-stores: #1C3535;
-  --color-products: #4C80BF;
-  --bg-products: #212D40;
-  --color-expenses: #FBBF24;
-  --bg-expenses: #353024;
-  --border-light: #2A2E3D;
-  --text-light: #D1CACE;
-  --text-dim: #181B24;
-  --text-muted: #707989;
+
+  /* Brand */
+  --primary-color: #8B5CF6;
+  --primary-hover: #9B72F8;
+  --primary-bg: #1E1633;
+
+  /* Backgrounds */
+  --primary-bg-color: #0B0B10;
+  --bg-panel: #13141B;
+  --bg-panel-hover: #181923;
+  --bg-button: #242033;
+
+  /* Borders */
+  --border-light: #262936;
+  --border-subtle: #1D1F29;
+  --border-primary: #3B2C62;
+
+  /* Text */
+  --text-light: #F1F0F5;
+  --text-dim: #A8A6B3;
+  --text-muted: #717585;
+
+  /* Success / Open */
   --open: #34D399;
-  --open-bg: #1C3535;
-  --close: #DC362E;
-  --close-bg: #E3918D;
+  --open-bg: #102B27;
+  --open-stores: #34D399;
+  --open-bg-stores: #102B27;
+
+  /* Products / Info */
+  --color-products: #60A5FA;
+  --bg-products: #132238;
+
+  /* Expenses / Warning */
+  --color-expenses: #FBBF24;
+  --bg-expenses: #2C2411;
+
+  /* Close / Danger */
+  --close: #F87171;
+  --close-bg: #301719;
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sans);
+  background: var(--primary-bg-color);
+  color: var(--text-light);
 }

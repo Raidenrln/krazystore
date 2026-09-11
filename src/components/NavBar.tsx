@@ -1,4 +1,4 @@
-import { Box, LayoutDashboard, ReceiptText, Settings, Store } from "lucide-react";
+import { Box, LayoutDashboard, ReceiptText, Settings, ShoppingCart, Store } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
@@ -6,28 +6,33 @@ const NavBar = () => {
     {
       name: "Dashboard",
       path: "/dashboard",
-      icon: LayoutDashboard,
+      icon: LayoutDashboard
     },
     {
       name: "Stores",
       path: "/stores",
-      icon: Store,
+      icon: Store
     },
     {
       name: "Products",
       path: "/products",
-      icon: Box,
+      icon: Box
+    },
+    {
+      name: "Cart",
+      path: "/cart",
+      icon: ShoppingCart
     },
     {
       name: "Expenses",
       path: "/expenses",
-      icon: ReceiptText,
+      icon: ReceiptText
     },
     {
       name: "Settings",
       path: "/settings",
-      icon: Settings,
-    },
+      icon: Settings
+    }
   ];
 
   return (

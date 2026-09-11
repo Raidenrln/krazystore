@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { useContext, useState } from "react";
 import { ProductContext } from "../context/products/ProductsContext";
 import { StoreContext } from "../context/store/StoreContext";
+import { CartContext } from "../context/cart/CartContext";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,6 +13,7 @@ interface NavbarContextType {
 const Products = () => {
   const { products } = useContext(ProductContext)!;
   const { stores } = useContext(StoreContext)!;
+  const { addCartItem } = useContext(CartContext)!;
   const { setShowNavbar } = useOutletContext<NavbarContextType>();
   const [isAddingProductOpen, setIsAddingProductOpen] = useState(false);
   const handleOpenAddProduct = () => {
@@ -125,7 +127,7 @@ const Products = () => {
                   <button className="bg-(--bg-button) p-2 rounded-xl">
                     <Scale size={16} />
                   </button>
-                  <button className="bg-(--bg-button) p-2 rounded-xl">
+                  <button onClick={() => addCartItem(e.id, 1)} className="bg-(--bg-button) p-2 rounded-xl">
                     <ShoppingCart size={16} />
                   </button>
                   <button className="bg-(--bg-button) p-2 rounded-xl">

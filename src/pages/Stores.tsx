@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import AddingStore from "../components/modals/AddingStore";
 import { StoreContext } from "../context/store/StoreContext";
 import { CategoryContext } from "../context/category/CategoryContext";
+import EditingStore from "../components/modals/EditingProduct";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,19 +12,30 @@ interface NavbarContextType {
 
 const Stores = () => {
   const { setShowNavbar } = useOutletContext<NavbarContextType>();
-  const { stores } = useContext(StoreContext)!;
+  const { stores, deleteStore } = useContext(StoreContext)!;
   const [isAddingStoreOpen, setIsAddingStoreOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const { storeCategories } = useContext(CategoryContext)!;
   const [searchValue, setSearchValue] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [targetStore, setTargetStore] = useState("");
   const handleOpenAddStore = () => {
     setIsAddingStoreOpen(true);
     setShowNavbar(false);
   };
+
   const handleCloseAddProduct = () => {
     setIsAddingStoreOpen(false);
     setShowNavbar(true);
   };
+
+  const handleEditing = (store: string) => {
+    setEditing(true)
+    setTargetStore(store)
+  }
+  const handleCloseEdit = () => {
+    setEditing(false)
+  }
 
   const hoursToMinutes = (time: string) => {
     const [hours, minutes] = time.split(":").map(Number);
@@ -139,8 +151,8 @@ const Stores = () => {
                     {s.category}
                   </span>
                   <div className="flex gap-3">
-                    <Pencil size={18} className="text-(--text-muted)" />
-                    <Trash size={18} className="text-(--text-muted)" />
+                    <Pencil size={18} className="text-(--text-muted)" onClick={() => {handleEditing(s.id); setShowNavbar(false);}} />
+                    <Trash size={18} className="text-(--text-muted)" onClick={() => deleteStore(s.id)}/>
                   </div>
                 </div>
 
@@ -177,6 +189,11 @@ const Stores = () => {
       {isAddingStoreOpen && (
         <div className="fixed bottom-0 w-full">
           <AddingStore onClose={handleCloseAddProduct} />
+        </div>
+      )}
+      {editing && (
+        <div className="fixed bottom-0 w-full">
+          <EditingStore store={targetStore} onClose={handleCloseEdit}/>
         </div>
       )}
     </main>

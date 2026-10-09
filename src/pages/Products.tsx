@@ -102,7 +102,7 @@ const Products = () => {
                 <div>
                   <h1 className="text-[16px]">{e.name}</h1>
                   <span className="text-[14px] text-(--text-muted)">
-                    Other • {targetStore?.name ?? "unknown store"}
+                    {targetStore?.category} • {targetStore?.name ?? "unknown store"}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">

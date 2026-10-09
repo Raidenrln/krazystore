@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { ProductContext } from "../context/products/ProductsContext";
 import { StoreContext } from "../context/store/StoreContext";
 import { CartContext } from "../context/cart/CartContext";
+import { CategoryContext } from "../context/category/CategoryContext";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,6 +17,9 @@ const Products = () => {
   const { addCartItem } = useContext(CartContext)!;
   const { setShowNavbar } = useOutletContext<NavbarContextType>();
   const [isAddingProductOpen, setIsAddingProductOpen] = useState(false);
+  const { productCategories } = useContext(CategoryContext)!;
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchValue, setSearchValue] = useState("");
   const handleOpenAddProduct = () => {
     setIsAddingProductOpen(true);
     setShowNavbar(false);
@@ -24,6 +28,12 @@ const Products = () => {
     setIsAddingProductOpen(false);
     setShowNavbar(true);
   };
+
+  const filteredProduct = products.filter((product) => {
+    const matchesCategory = activeTab === "all" || (activeTab === product.category)
+    const matchesSearch = product.name.toLowerCase().includes(searchValue.trim().toLocaleLowerCase());
+    return matchesCategory && matchesSearch;
+  })
   // type StoreCategory =
   //   | "Convenience Store"
   //   | "Grocery"
@@ -63,52 +73,37 @@ const Products = () => {
               className="rounded-lg py-2 pl-10 pr-2 flex-1 bg-(--bg-panel) text-[14px]"
               type="search"
               placeholder="Search an Products"
+              onChange={e => setSearchValue(e.target.value)}
             />
           </div>
           <div className="flex overflow-x-scroll gap-2 w-full" style={{ scrollbarWidth: "none" }}>
-            <div className="bg-(--primary-color) w-auto px-4 py-1 rounded-full">
+            <div className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`} onClick={() => setActiveTab("all")}>
               <span className="text-[13px]">All</span>
             </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Grocery</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Convenience Store</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Karinderya</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Fast Food</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Cafe</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Bakery</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Food Stall</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Public Market</span>
-            </div>
-            <div className="bg-(--primary-color) shrink-0 px-2 py-1 rounded-full">
-              <span className="text-[13px]">Other</span>
-            </div>
+            {productCategories.map((p) => (
+              <div
+                key={p.id}
+                className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === p.name ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+                onClick={() => setActiveTab(p.name)}
+              >
+                <span className="text-[13px]">{p.name}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         {/*  */}
-        {products.map((e) => {
-          const targetStore = stores.find(s => s.id === e.storebelong);
-          
+        {filteredProduct.map((e) => {
+          const targetStore = stores.find((s) => s.id === e.storebelong);
+
           return (
             <div key={e.id} className="bg-(--bg-panel) w-full rounded-2xl">
               <div className="flex justify-between text-white p-4">
                 <div>
                   <h1 className="text-[16px]">{e.name}</h1>
-                  <span className="text-[14px] text-(--text-muted)">Other • {targetStore?.name ?? "unknown store"}</span>
+                  <span className="text-[14px] text-(--text-muted)">
+                    Other • {targetStore?.name ?? "unknown store"}
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-[24px]">₱{e.price}</span>
@@ -127,7 +122,10 @@ const Products = () => {
                   <button className="bg-(--bg-button) p-2 rounded-xl">
                     <Scale size={16} />
                   </button>
-                  <button onClick={() => addCartItem(e.id, 1)} className="bg-(--bg-button) p-2 rounded-xl">
+                  <button
+                    onClick={() => addCartItem(e.id, 1)}
+                    className="bg-(--bg-button) p-2 rounded-xl"
+                  >
                     <ShoppingCart size={16} />
                   </button>
                   <button className="bg-(--bg-button) p-2 rounded-xl">

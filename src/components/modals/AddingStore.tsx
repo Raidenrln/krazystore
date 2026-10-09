@@ -1,8 +1,9 @@
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { useContext, useState, type FormEvent } from "react";
 import { StoreContext } from "../../context/store/StoreContext";
 import type { StoreModel } from "../../models/storeModel";
 import { v4 as uuidv4 } from 'uuid';
+import { CategoryContext } from "../../context/category/CategoryContext";
 interface AddingStoreProps {
   onClose: () => void;
 }
@@ -15,7 +16,7 @@ const AddingStore = ({ onClose }: AddingStoreProps) => {
   const [isOpenTime, setOpentime] = useState("08:00")
   const [isCloseTime, setCloseTime] = useState("20:00")
   const [isfacebook, setFacebookPage] = useState("")
-  
+  const { storeCategories } = useContext(CategoryContext)!;
   const createdDate = new Date().toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -78,17 +79,26 @@ const AddingStore = ({ onClose }: AddingStoreProps) => {
             />
           </div>
           <div className="w-full flex flex-col gap-1 relative">
-            <label htmlFor="Category" className="text-[12.5px] font-semibold">
-              Category*
+            <label htmlFor="Store" className="text-[12.5px] font-semibold">
+              Store*
             </label>
-            <input
-              id="Category"
-              type="text"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
-              value={IsStoreCategory}
-              onChange={e => setStoreCategory(e.target.value)}
+            <select
+              name="store"
+              id="Store"
+              className="w-full border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] appearance-none px-3"
               required
-            />
+              onChange={e => setStoreCategory(e.target.value)}
+            >
+              <option key="placeholder" value="" hidden className="text-(--text-muted)">
+                Choose store
+              </option>
+              {storeCategories.map((s) => (
+                <option key={s.id} value={s.name} className="text-(--text-muted) bg-(--bg-panel)">
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={18} className="absolute top-8 right-2" />
           </div>
           <div className="w-full flex gap-1 items-center">
             <label htmlFor="Open at" className="text-[12.5px] font-semibold">

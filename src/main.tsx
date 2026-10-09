@@ -6,8 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 import { StoreProvider } from "./context/store/StoreProvider.tsx";
 import { ProductProvider } from "./context/products/ProductsProvider.tsx";
 import { CartProvider } from "./context/cart/CartProvider.tsx";
-import { ReceiptContext } from "./context/receipt/ReceiptContext.tsx";
 import { ReceiptProvider } from "./context/receipt/ReceiptProvider.tsx";
+import { CategoryProvider } from "./context/category/CategoryProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,7 +16,9 @@ createRoot(document.getElementById("root")!).render(
         <ProductProvider>
           <CartProvider>
             <ReceiptProvider>
-              <App />
+              <CategoryProvider>
+                <App />
+              </CategoryProvider>
             </ReceiptProvider>
           </CartProvider>
         </ProductProvider>

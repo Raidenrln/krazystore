@@ -38,10 +38,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = () => {
     setCartItem([])
-  }
+  };
 
   useEffect(() => {
-    console.log(cartItem);
+    console.log("Cart:", cartItem);
   }, [cartItem]);
 
   return (

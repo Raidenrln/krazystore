@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Store, Package, Plus, X } from "lucide-react";
+import { CategoryContext } from "../context/category/CategoryContext";
 
 type CategoryCardProps = {
-  icon: React.ElementType;
+  icon: typeof Store;
   label: string;
   placeholder: string;
-  categories: string[];
+  categories: { id: string; name: string }[];
   onAdd: (name: string) => void;
   onRemove: (name: string) => void;
 };
@@ -22,32 +23,42 @@ const CategoryCard = ({
 
   const handleAdd = () => {
     const name = input.trim();
+
     if (!name) return;
-    if (categories.some((c) => c.toLowerCase() === name.toLowerCase())) {
+
+    if (categories.some((category) => category.name.toLowerCase() === name.toLowerCase())) {
       setInput("");
       return;
     }
+
     onAdd(name);
     setInput("");
   };
 
   return (
-    <div className="w-full flex flex-col gap-2">
-      <span className="px-1 text-[12px] font-medium text-(--text-muted)">{label}</span>
-
+    <div className="flex w-full flex-col gap-2">
+      <span className="px-1 text-[12px] font-medium text-(--text-muted)">{label} </span>
       <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-(--bg-panel)">
         <div className="flex items-center gap-2 p-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--bg-button)">
             <Icon size={16} className="text-(--primary-color)" />
           </div>
+
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
             placeholder={placeholder}
             className="min-w-0 flex-1 bg-transparent text-[14px] text-white placeholder:text-(--text-muted) outline-none"
           />
+
           <button
+            type="button"
             onClick={handleAdd}
             disabled={!input.trim()}
             aria-label={`Add ${label.toLowerCase()}`}
@@ -59,15 +70,17 @@ const CategoryCard = ({
 
         {categories.length > 0 ? (
           <div className="flex flex-wrap gap-2 border-t border-white/6 p-3">
-            {categories.map((name) => (
+            {categories.map((category) => (
               <span
-                key={name}
+                key={category.id}
                 className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/4 py-1.5 pl-3 pr-2 text-[13px] text-zinc-200"
               >
-                {name}
+                {category.name}
+
                 <button
-                  onClick={() => onRemove(name)}
-                  aria-label={`Remove ${name}`}
+                  type="button"
+                  onClick={() => onRemove(category.id)}
+                  aria-label={`Remove ${category.id}`}
                   className="flex h-4 w-4 items-center justify-center rounded-full text-(--text-muted) hover:text-white"
                 >
                   <X size={12} strokeWidth={2} />
@@ -86,36 +99,47 @@ const CategoryCard = ({
 };
 
 const Settings = () => {
-  const [storeCategories, setStoreCategories] = useState<string[]>([]);
-  const [productCategories, setProductCategories] = useState<string[]>([]);
+  const categoryContext = useContext(CategoryContext);
+
+  if (!categoryContext) {
+    throw new Error("Settings must be used inside a CategoryProvider.");
+  }
+
+  const { storeCategories, addingStoreCategories, productCategories, addingProductCategories } =
+    categoryContext;
+
+  const removeStoreCategory = (name: string) => {
+    categoryContext.removeStoreCategory(name);
+  };
+
+  const removeProductCategory = (name: string) => {
+    categoryContext.removeProductCategory(name);
+  };
 
   return (
-    <main className="min-h-screen w-full flex flex-col">
-      {/* Mobile devices Settings */}
-      <div className="sm:hidden w-full items-center flex flex-col p-4 gap-4 pb-22">
+    <main className="min-h-screen w-full">
+      <div className="flex w-full flex-col items-center gap-4 p-4 pb-22 sm:hidden">
         <div className="w-full text-white">
           <h1 className="text-2xl font-bold">Settings</h1>
           <p className="text-[12px] text-(--text-muted)">
             Manage your account, preferences, and categories.
           </p>
         </div>
-
         <CategoryCard
           icon={Store}
           label="Store categories"
           placeholder="Store category name"
           categories={storeCategories}
-          onAdd={(name) => setStoreCategories((prev) => [...prev, name])}
-          onRemove={(name) => setStoreCategories((prev) => prev.filter((c) => c !== name))}
+          onAdd={addingStoreCategories}
+          onRemove={removeStoreCategory}
         />
-
         <CategoryCard
           icon={Package}
           label="Product categories"
           placeholder="Product category name"
           categories={productCategories}
-          onAdd={(name) => setProductCategories((prev) => [...prev, name])}
-          onRemove={(name) => setProductCategories((prev) => prev.filter((c) => c !== name))}
+          onAdd={addingProductCategories}
+          onRemove={removeProductCategory}
         />
       </div>
     </main>

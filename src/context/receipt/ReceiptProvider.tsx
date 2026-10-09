@@ -13,7 +13,7 @@ export const ReceiptProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    console.log(receipt);
+    console.log("Receipt:", receipt);
   }, [receipt]);
 
   return (

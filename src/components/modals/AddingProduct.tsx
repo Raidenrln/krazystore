@@ -4,6 +4,7 @@ import { useContext, useState, type FormEvent } from "react";
 import { ProductContext } from "../../context/products/ProductsContext";
 import type { ProductModel } from "../../models/productModel";
 import { v4 as uuidv4 } from "uuid";
+import { CategoryContext } from "../../context/category/CategoryContext";
 interface AddingProductProps {
   onClose: () => void;
 }
@@ -15,7 +16,7 @@ const AddingProduct = ({ onClose }: AddingProductProps) => {
   const [chooseStore, setChooseStore] = useState("");
   const [productPrice, setProductPrice] = useState(0);
   const [productUnit, setProductUnit] = useState("");
-
+  const { productCategories } = useContext(CategoryContext)!;
   const handleAdd = (e: FormEvent) => {
     e.preventDefault();
     const now = new Date();
@@ -60,18 +61,28 @@ const AddingProduct = ({ onClose }: AddingProductProps) => {
               required
             />
           </div>
-          <div className="w-full flex flex-col gap-1">
-            <label htmlFor="product-category" className="text-[12.5px] font-semibold">
-              Product category*
+          <div className="w-full flex flex-col gap-1 relative">
+            <label htmlFor="productCategory" className="text-[12.5px] font-semibold">
+              Category*
             </label>
-            <input
-              id="product-category"
-              type="text"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
+            <select
+              name="productCategory"
+              id="productCategory"
+              className="w-full border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] appearance-none px-3"
               value={productCategory}
               onChange={(e) => setProductCategory(e.target.value)}
               required
-            />
+            >
+              <option key="placeholder" value="" hidden className="text-(--text-muted)">
+                Choose category
+              </option>
+              {productCategories.map((p) => (
+                <option key={p.id} value={p.name} className="text-(--text-muted) bg-(--bg-panel)">
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={18} className="absolute top-8 right-2" />
           </div>
           <div className="w-full flex flex-col gap-1 relative">
             <label htmlFor="Store" className="text-[12.5px] font-semibold">

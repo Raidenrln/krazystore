@@ -4,7 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import AddingStore from "../components/modals/AddingStore";
 import { StoreContext } from "../context/store/StoreContext";
 import { CategoryContext } from "../context/category/CategoryContext";
-import EditingStore from "../components/modals/EditingProduct";
+import EditingStore from "../components/modals/EditingStore";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,12 +30,12 @@ const Stores = () => {
   };
 
   const handleEditing = (store: string) => {
-    setEditing(true)
-    setTargetStore(store)
-  }
+    setEditing(true);
+    setTargetStore(store);
+  };
   const handleCloseEdit = () => {
-    setEditing(false)
-  }
+    setEditing(false);
+  };
 
   const hoursToMinutes = (time: string) => {
     const [hours, minutes] = time.split(":").map(Number);
@@ -101,13 +101,13 @@ const Stores = () => {
 
           <div className="flex overflow-x-scroll gap-2 w-full" style={{ scrollbarWidth: "none" }}>
             <div
-              className={`w-auto px-4 py-1 rounded-full  border border-(--border-light) ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+              className={`w-auto px-4 py-1 rounded-full  border border-(--border-light) cursor-pointer ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
               onClick={() => setActiveTab("all")}
             >
               <span className="text-[13px]">All</span>
             </div>
             <div
-              className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === "open" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+              className={` w-auto px-4 py-1 rounded-full border border-(--border-light) cursor-pointer ${activeTab === "open" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
               onClick={() => setActiveTab("open")}
             >
               <span className="text-[13px]">Open</span>
@@ -116,7 +116,7 @@ const Stores = () => {
               return (
                 <div
                   key={s.id}
-                  className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === s.name ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+                  className={` w-auto px-4 py-1 rounded-full border border-(--border-light) cursor-pointer ${activeTab === s.name ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
                   onClick={() => setActiveTab(s.name)}
                 >
                   <span className="text-[13px]">{s.name}</span>
@@ -151,8 +151,19 @@ const Stores = () => {
                     {s.category}
                   </span>
                   <div className="flex gap-3">
-                    <Pencil size={18} className="text-(--text-muted)" onClick={() => {handleEditing(s.id); setShowNavbar(false);}} />
-                    <Trash size={18} className="text-(--text-muted)" onClick={() => deleteStore(s.id)}/>
+                    <Pencil
+                      size={18}
+                      className="text-(--text-muted)"
+                      onClick={() => {
+                        handleEditing(s.id);
+                        setShowNavbar(false);
+                      }}
+                    />
+                    <Trash
+                      size={18}
+                      className="text-(--text-muted)"
+                      onClick={() => deleteStore(s.id)}
+                    />
                   </div>
                 </div>
 
@@ -187,13 +198,14 @@ const Stores = () => {
         </div>
       </div>
       {isAddingStoreOpen && (
-        <div className="fixed bottom-0 w-full">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
           <AddingStore onClose={handleCloseAddProduct} />
         </div>
       )}
+
       {editing && (
-        <div className="fixed bottom-0 w-full">
-          <EditingStore store={targetStore} onClose={handleCloseEdit}/>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
+          <EditingStore store={targetStore} onClose={handleCloseEdit} />
         </div>
       )}
     </main>

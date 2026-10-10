@@ -6,6 +6,7 @@ import { ProductContext } from "../context/products/ProductsContext";
 import { StoreContext } from "../context/store/StoreContext";
 import { CartContext } from "../context/cart/CartContext";
 import { CategoryContext } from "../context/category/CategoryContext";
+import EditingProduct from "../components/modals/EditingProduct";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +21,8 @@ const Products = () => {
   const { productCategories } = useContext(CategoryContext)!;
   const [activeTab, setActiveTab] = useState("all");
   const [searchValue, setSearchValue] = useState("");
+  const [productEdit, setProductEdit] = useState(false);
+  const [targetProduct, setTargetProduct] = useState("");
   const handleOpenAddProduct = () => {
     setIsAddingProductOpen(true);
     setShowNavbar(false);
@@ -28,7 +31,13 @@ const Products = () => {
     setIsAddingProductOpen(false);
     setShowNavbar(true);
   };
-
+  const handleEditProduct = (e: string) => {
+    setTargetProduct(e)
+    setProductEdit(true);
+  }
+  const handleCloseEdit = () => {
+    setProductEdit(false);
+  }
   const filteredProduct = products.filter((product) => {
     const matchesCategory = activeTab === "all" || (activeTab === product.category)
     const matchesSearch = product.name.toLowerCase().includes(searchValue.trim().toLocaleLowerCase());
@@ -128,7 +137,7 @@ const Products = () => {
                   >
                     <ShoppingCart size={16} />
                   </button>
-                  <button className="bg-(--bg-button) p-2 rounded-xl">
+                  <button className="bg-(--bg-button) p-2 rounded-xl" onClick={() => handleEditProduct(e.id)}>
                     <PenLine size={16} />
                   </button>
                   <button className="bg-(--bg-button) p-2 rounded-xl">
@@ -144,6 +153,11 @@ const Products = () => {
       {isAddingProductOpen && (
         <div className="fixed bottom-0 w-full">
           <AddingProduct onClose={handleCloseAddProduct} />
+        </div>
+      )}
+      {productEdit && (
+        <div>
+          <EditingProduct productId={targetProduct} onClose={handleCloseEdit}/>
         </div>
       )}
     </main>

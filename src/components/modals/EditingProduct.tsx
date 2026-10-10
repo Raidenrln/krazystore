@@ -1,86 +1,88 @@
-import { useContext, useEffect, useState, type FormEvent } from "react";
-import { StoreContext } from "../../context/store/StoreContext"
+import { X, ChevronDown } from "lucide-react";
+import { StoreContext } from "../../context/store/StoreContext";
+import { useContext, useState, type FormEvent } from "react";
+import { ProductContext } from "../../context/products/ProductsContext";
+import type { ProductModel } from "../../models/productModel";
+import { v4 as uuidv4 } from "uuid";
 import { CategoryContext } from "../../context/category/CategoryContext";
-import { ChevronDown, X } from "lucide-react";
-import { useOutletContext } from "react-router-dom";
-import type { EditedStore } from "../../context/store/StoreProvider";
-
-type EditingStoreModel = {
-  store: string
+import type { EditingProductModel } from "../../context/products/ProductsProvider";
+interface AddingProductProps {
+  productId: string
   onClose: () => void;
 }
 
-interface NavbarContextType {
-  setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const EditingStore = ({ store, onClose }: EditingStoreModel) => {
-  const { stores, editingStore } = useContext(StoreContext)!;
-  const { setShowNavbar } = useOutletContext<NavbarContextType>();
-  const storeTarget = stores.find(s => s.id === store);
-  const { storeCategories } = useContext(CategoryContext)!;
-  const [IsStorename, setStorename] = useState(storeTarget!.name);
-  const [IsStoreLocation, setStoreLocation] = useState(storeTarget!.location)
-  const [IsStoreCategory, setStoreCategory] = useState(storeTarget!.category)
-  const [isOpenTime, setOpentime] = useState(storeTarget!.opentime)
-  const [isCloseTime, setCloseTime] = useState(storeTarget!.closetime)
-  const [isfacebook, setFacebookPage] = useState(storeTarget!.facebook)
-  
-  const handleSubmit = (e: FormEvent) => {
+const AddingProduct = ({ productId, onClose }: AddingProductProps) => {
+  const { stores } = useContext(StoreContext)!;
+  const { products, editingProduct } = useContext(ProductContext)!;
+  const targetProduct = products.find(p => p.id === productId);
+  const [name, setName] = useState(targetProduct!.name);
+  const [productCategory, setProductCategory] = useState(targetProduct!.category);
+  const [chooseStore, setChooseStore] = useState(targetProduct!.category);
+  const [productPrice, setProductPrice] = useState(targetProduct!.price);
+  const [productUnit, setProductUnit] = useState(targetProduct!.unit);
+  const { productCategories } = useContext(CategoryContext)!;
+  const handleAdd = (e: FormEvent) => {
     e.preventDefault();
-    setShowNavbar(true)
-    const editedStore: EditedStore = {
-      name: IsStorename,
-      location: IsStoreLocation,
-      category: IsStoreCategory,
-      opentime: isOpenTime,
-      closetime: isCloseTime,
-      facebook: isfacebook,
-    }
-    editingStore(storeTarget!.id, editedStore);
+    const now = new Date();
+    const editedProduct: EditingProductModel = {
+      name: name,
+      price: productPrice,
+      storeBelong: chooseStore,
+      category: productCategory,
+      unit: productUnit
+    };
+    editingProduct(productId, editedProduct);
     onClose();
-  }
-
-  
-
-  useEffect(() => {console.log("shesh", storeTarget)})
+  };
   return (
     <main className="w-full">
       <div className="text-white flex bg-(--bg-panel) rounded-t-2xl flex-col">
         <div className="flex justify-between w-full p-4">
           <div className="flex flex-col">
-            <h1 className="text-[15px] font-semibold">Edit Store</h1>
-            <p className="text-[13px] text-(--text-muted)">Update the details you track.</p>
+            <h1 className="text-[15px] font-semibold">Track a Product</h1>
+            <p className="text-[13px] text-(--text-muted)">
+              Record a product price at one of your stores.
+            </p>
           </div>
-          <X onClick={() => {onClose(); setShowNavbar(true)}} />
+          <X onClick={() => onClose()} />
         </div>
         <hr className="border-0 border-t border-(--text-muted)/50" />
-        <form onSubmit={handleSubmit} id="storeForm" className="p-4 flex gap-4 flex-col">
+        <form onSubmit={handleAdd} id="productForm" className="p-4 flex gap-4 flex-col">
           <div className="w-full flex flex-col gap-1">
-            <label htmlFor="Store name" className="text-[12.5px] font-semibold">
-              Store name
+            <label htmlFor="name" className="text-[12.5px] font-semibold">
+              Product name*
             </label>
             <input
-              id="Store name"
+              id="name"
               type="text"
               className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
-              value={IsStorename}
-              onChange={e => setStorename(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
-          <div className="w-full flex flex-col gap-1">
-            <label htmlFor="Location" className="text-[12.5px] font-semibold">
-              Location
+          <div className="w-full flex flex-col gap-1 relative">
+            <label htmlFor="productCategory" className="text-[12.5px] font-semibold">
+              Category*
             </label>
-            <input
-              id="Location"
-              type="text"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
-              value={IsStoreLocation}
-              onChange={e => setStoreLocation(e.target.value)}
+            <select
+              name="productCategory"
+              id="productCategory"
+              className="w-full border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] appearance-none px-3"
+              value={productCategory}
+              onChange={(e) => setProductCategory(e.target.value)}
               required
-            />
+            >
+              <option key="placeholder" value="" hidden className="text-(--text-muted)">
+                Choose category
+              </option>
+              {productCategories.map((p) => (
+                <option key={p.id} value={p.name} className="text-(--text-muted) bg-(--bg-panel)">
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={18} className="absolute top-8 right-2" />
           </div>
           <div className="w-full flex flex-col gap-1 relative">
             <label htmlFor="Store" className="text-[12.5px] font-semibold">
@@ -90,73 +92,80 @@ const EditingStore = ({ store, onClose }: EditingStoreModel) => {
               name="store"
               id="Store"
               className="w-full border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] appearance-none px-3"
+              value={chooseStore}
+              onChange={(e) => setChooseStore(e.target.value)}
               required
-              value={IsStoreCategory}
-              onChange={e => setStoreCategory(e.target.value)}
             >
               <option key="placeholder" value="" hidden className="text-(--text-muted)">
                 Choose store
               </option>
-              {storeCategories.map((s) => (
-                <option key={s.id} value={s.name} className="text-(--text-muted) bg-(--bg-panel)">
+              {stores.map((s) => (
+                <option key={s.id} value={s.id} className="text-(--text-muted) bg-(--bg-panel)">
                   {s.name}
                 </option>
               ))}
             </select>
             <ChevronDown size={18} className="absolute top-8 right-2" />
           </div>
-          <div className="w-full flex gap-1 items-center">
-            <label htmlFor="Open at" className="text-[12.5px] font-semibold">
-              Open*
+          <div className="w-full flex flex-col gap-1">
+            <label htmlFor="price" className="text-[12.5px] font-semibold">
+              Price(₱)*
             </label>
             <input
-              id="Open at"
-              type="time"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2 scheme-dark"
-              value={isOpenTime}
-              onChange={e => setOpentime(e.target.value)}
-              required
-            />
-            <label htmlFor="Close" className="text-[12.5px] font-semibold">
-              Close
-            </label>
-            <input
-              id="Close"
-              type="time"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2 scheme-dark"
-              value={isCloseTime}
-              onChange={e => setCloseTime(e.target.value)}
+              id="price"
+              type="text"
+              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
+              value={productPrice}
+              onChange={(e) => setProductPrice(Number(e.target.value))}
               required
             />
           </div>
           <div className="w-full flex flex-col gap-1 relative">
-            <label htmlFor="Facebook page" className="text-[12.5px] font-semibold">
-              Facebook page
+            <label htmlFor="Price type / unit*" className="text-[12.5px] font-semibold">
+              Price type / unit*
             </label>
-            <input
-              id="Facebook page"
-              type="text"
-              className="border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] p-2"
-              value={isfacebook}
-              onChange={e => setFacebookPage(e.target.value)}
-            />
+            <select
+              value={productUnit}
+              name=""
+              id="Price type / unit*"
+              className="w-full border border-(--border-light) focus:outline-none focus:ring-1 focus:ring-(--primary-color) rounded-lg h-9 text-[12px] appearance-none px-3"
+              onChange={(e) => setProductUnit(e.target.value)}
+            >
+              <option value="" hidden className="text-(--text-muted)">
+                Choose type
+              </option>
+              <option value="perPiece" className="text-(--text-muted) bg-(--bg-panel)">
+                Per piece
+              </option>
+              <option value="perKilo" className="text-(--text-muted) bg-(--bg-panel)">
+                Per kilo
+              </option>
+              <option value="perLiter" className="text-(--text-muted) bg-(--bg-panel)">
+                Per liter
+              </option>
+            </select>
+            <ChevronDown size={18} className="absolute top-8 right-2" />
           </div>
         </form>
         <hr className="border-0 border-t border-(--text-muted)/50" />
         <div className="flex justify-end py-2 px-4 gap-3">
           <button
-            onClick={() => {onClose(); setShowNavbar(true)}}
+            onClick={() => onClose()}
             className="py-2 px-4 border border-(--border-light) rounded-xl"
           >
             Cancel
           </button>
-          <button type="submit" form="storeForm" className="py-2 px-4 border border-(--border-light) rounded-xl bg-(--primary-color)">
-            Save
+          <button
+            type="submit"
+            form="productForm"
+            className="py-2 px-4 border border-(--border-light) rounded-xl bg-(--primary-color)"
+          >
+            Add Product
           </button>
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default EditingStore
+export default AddingProduct;

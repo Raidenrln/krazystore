@@ -32,17 +32,19 @@ const Products = () => {
     setShowNavbar(true);
   };
   const handleEditProduct = (e: string) => {
-    setTargetProduct(e)
+    setTargetProduct(e);
     setProductEdit(true);
-  }
+  };
   const handleCloseEdit = () => {
     setProductEdit(false);
-  }
+  };
   const filteredProduct = products.filter((product) => {
-    const matchesCategory = activeTab === "all" || (activeTab === product.category)
-    const matchesSearch = product.name.toLowerCase().includes(searchValue.trim().toLocaleLowerCase());
+    const matchesCategory = activeTab === "all" || activeTab === product.category;
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchValue.trim().toLocaleLowerCase());
     return matchesCategory && matchesSearch;
-  })
+  });
   // type StoreCategory =
   //   | "Convenience Store"
   //   | "Grocery"
@@ -82,11 +84,14 @@ const Products = () => {
               className="rounded-lg py-2 pl-10 pr-2 flex-1 bg-(--bg-panel) text-[14px]"
               type="search"
               placeholder="Search an Products"
-              onChange={e => setSearchValue(e.target.value)}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
           </div>
           <div className="flex overflow-x-scroll gap-2 w-full" style={{ scrollbarWidth: "none" }}>
-            <div className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`} onClick={() => setActiveTab("all")}>
+            <div
+              className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+              onClick={() => setActiveTab("all")}
+            >
               <span className="text-[13px]">All</span>
             </div>
             {productCategories.map((p) => (
@@ -137,7 +142,10 @@ const Products = () => {
                   >
                     <ShoppingCart size={16} />
                   </button>
-                  <button className="bg-(--bg-button) p-2 rounded-xl" onClick={() => handleEditProduct(e.id)}>
+                  <button
+                    className="bg-(--bg-button) p-2 rounded-xl"
+                    onClick={() => handleEditProduct(e.id)}
+                  >
                     <PenLine size={16} />
                   </button>
                   <button className="bg-(--bg-button) p-2 rounded-xl">
@@ -151,13 +159,13 @@ const Products = () => {
       </div>
       {/*  */}
       {isAddingProductOpen && (
-        <div className="fixed bottom-0 w-full">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
           <AddingProduct onClose={handleCloseAddProduct} />
         </div>
       )}
       {productEdit && (
-        <div>
-          <EditingProduct productId={targetProduct} onClose={handleCloseEdit}/>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
+          <EditingProduct productId={targetProduct} onClose={handleCloseEdit} />
         </div>
       )}
     </main>

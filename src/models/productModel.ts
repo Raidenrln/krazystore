@@ -1,6 +1,6 @@
 type PriceHistoryModel = {
   previousPrice: number
-  newPrice?: number
+  newPrice: number
   changedAt: string
 }
 

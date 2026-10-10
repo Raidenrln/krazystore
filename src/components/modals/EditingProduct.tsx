@@ -2,8 +2,6 @@ import { X, ChevronDown } from "lucide-react";
 import { StoreContext } from "../../context/store/StoreContext";
 import { useContext, useState, type FormEvent } from "react";
 import { ProductContext } from "../../context/products/ProductsContext";
-import type { ProductModel } from "../../models/productModel";
-import { v4 as uuidv4 } from "uuid";
 import { CategoryContext } from "../../context/category/CategoryContext";
 import type { EditingProductModel } from "../../context/products/ProductsProvider";
 interface AddingProductProps {
@@ -12,18 +10,20 @@ interface AddingProductProps {
 }
 
 const AddingProduct = ({ productId, onClose }: AddingProductProps) => {
+  
   const { stores } = useContext(StoreContext)!;
   const { products, editingProduct } = useContext(ProductContext)!;
   const targetProduct = products.find(p => p.id === productId);
   const [name, setName] = useState(targetProduct!.name);
   const [productCategory, setProductCategory] = useState(targetProduct!.category);
-  const [chooseStore, setChooseStore] = useState(targetProduct!.category);
+  const [chooseStore, setChooseStore] = useState(targetProduct!.storebelong);
   const [productPrice, setProductPrice] = useState(targetProduct!.price);
   const [productUnit, setProductUnit] = useState(targetProduct!.unit);
   const { productCategories } = useContext(CategoryContext)!;
+
   const handleAdd = (e: FormEvent) => {
     e.preventDefault();
-    const now = new Date();
+
     const editedProduct: EditingProductModel = {
       name: name,
       price: productPrice,
@@ -33,15 +33,16 @@ const AddingProduct = ({ productId, onClose }: AddingProductProps) => {
     };
     editingProduct(productId, editedProduct);
     onClose();
+
   };
   return (
     <main className="w-full">
       <div className="text-white flex bg-(--bg-panel) rounded-t-2xl flex-col">
         <div className="flex justify-between w-full p-4">
           <div className="flex flex-col">
-            <h1 className="text-[15px] font-semibold">Track a Product</h1>
+            <h1 className="text-[15px] font-semibold">Edit Product</h1>
             <p className="text-[13px] text-(--text-muted)">
-              Record a product price at one of your stores.
+              Edit a product price at one of your stores tracking.
             </p>
           </div>
           <X onClick={() => onClose()} />
@@ -160,7 +161,7 @@ const AddingProduct = ({ productId, onClose }: AddingProductProps) => {
             form="productForm"
             className="py-2 px-4 border border-(--border-light) rounded-xl bg-(--primary-color)"
           >
-            Add Product
+            Save
           </button>
         </div>
       </div>

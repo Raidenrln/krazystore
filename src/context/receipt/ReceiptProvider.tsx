@@ -5,7 +5,10 @@ import { CartContext } from "../cart/CartContext";
 
 export const ReceiptProvider = ({ children }: { children: ReactNode }) => {
   const { clearCart } = useContext(CartContext)!;
-  const [receipt, setReceipt] = useState<ReceiptModel[]>([]);
+  const [receipt, setReceipt] = useState<ReceiptModel[]>(() => {
+    const savedReceipts = localStorage.getItem("savingReceipts");
+    return savedReceipts ? JSON.parse(savedReceipts) : [];
+  });
 
   const addReceipt = (newReceipt: ReceiptModel) => {
     setReceipt((prev) => [...prev, newReceipt]);
@@ -13,6 +16,7 @@ export const ReceiptProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    localStorage.setItem("savingReceipts", JSON.stringify(receipt));
     console.log("Receipt:", receipt);
   }, [receipt]);
 

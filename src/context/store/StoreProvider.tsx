@@ -12,7 +12,10 @@ export type EditedStore = {
 };
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
-  const [stores, setStores] = useState<StoreModel[]>([]);
+  const [stores, setStores] = useState<StoreModel[]>(() => {
+    const saveStore = localStorage.getItem("saveStore")
+    return saveStore ? JSON.parse(saveStore) : []
+  });
 
   const addStore = ( newStore: StoreModel ) => {
     setStores(prev => [...prev, newStore])
@@ -28,7 +31,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
+    
     console.log("Stores updated:", stores);
+    localStorage.setItem("saveStore", JSON.stringify(stores));
   }, [stores]);
   return (
     <StoreContext.Provider value={{ stores, addStore, setStores, editingStore, deleteStore }}>

@@ -12,7 +12,9 @@ export type EditingProductModel = {
 };
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<ProductModel[]>([]);
+  const [products, setProducts] = useState<ProductModel[]>(() =>  {
+    const savingProducts = localStorage.getItem("savedProducts");
+    return savingProducts ? JSON.parse(savingProducts) : []});
   const { setStores } = useContext(StoreContext)!;
   const now = new Date();
   const addingProduct = (newProduct: ProductModel, storeId: string) => {
@@ -44,6 +46,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    localStorage.setItem("savedProducts", JSON.stringify(products))
     console.log("Products:", products);
   }, [products]);
   return (

@@ -3,7 +3,10 @@ import { CartContext } from "./CartContext";
 import type { CartItem } from "../../models/cartModel";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItem, setCartItem] = useState<CartItem[]>([]);
+  const [cartItem, setCartItem] = useState<CartItem[]>(() => {
+    const saveCartItem = localStorage.getItem("savedCart");
+    return saveCartItem ? JSON.parse(saveCartItem) : [];
+  });
 
   const addCartItem = (id: string, quantity: number) => {
     setCartItem((prev) => {
@@ -17,7 +20,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [...prev, { id, quantity }];
     });
   };
-  
+
   const increaseQuantity = (id: string) => {
     setCartItem((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item)),
@@ -37,16 +40,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearCart = () => {
-    setCartItem([])
+    setCartItem([]);
   };
 
   useEffect(() => {
+    localStorage.setItem("savedCart", JSON.stringify(cartItem))
     console.log("Cart:", cartItem);
   }, [cartItem]);
 
   return (
     <CartContext.Provider
-      value={{ cartItem, addCartItem, increaseQuantity, decreaseQuantity, removeFromCart, clearCart }}
+      value={{
+        cartItem,
+        addCartItem,
+        increaseQuantity,
+        decreaseQuantity,
+        removeFromCart,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

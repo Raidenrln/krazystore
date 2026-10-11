@@ -45,6 +45,7 @@ const Products = () => {
       .includes(searchValue.trim().toLocaleLowerCase());
     return matchesCategory && matchesSearch;
   });
+  
   // type StoreCategory =
   //   | "Convenience Store"
   //   | "Grocery"
@@ -157,12 +158,13 @@ const Products = () => {
           );
         })}
       </div>
-      {/*  */}
+      {/* Adding Product Modal */}
       {isAddingProductOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
           <AddingProduct onClose={handleCloseAddProduct} />
         </div>
       )}
+      {/* Editing Product Modal */}
       {productEdit && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
           <EditingProduct productId={targetProduct} onClose={handleCloseEdit} />

@@ -13,30 +13,38 @@ export type EditedStore = {
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [stores, setStores] = useState<StoreModel[]>(() => {
-    const saveStore = localStorage.getItem("saveStore")
-    return saveStore ? JSON.parse(saveStore) : []
+    const saveStore = localStorage.getItem("saveStore");
+    return saveStore ? JSON.parse(saveStore) : [];
   });
 
-  const addStore = ( newStore: StoreModel ) => {
-    setStores(prev => [...prev, newStore])
-  }
+  const addStore = (newStore: StoreModel) => {
+    setStores((prev) => [...prev, newStore]);
+  };
 
   const editingStore = (storeId: string, editedStore: EditedStore) => {
-    setStores(prev => prev.map(store => store.id === storeId ? {...store, ...editedStore} : store))
-    console.log(stores)
-  }
+    setStores((prev) =>
+      prev.map((store) => (store.id === storeId ? { ...store, ...editedStore } : store)),
+    );
+    console.log(stores);
+  };
 
   const deleteStore = (store: string) => {
-    setStores(prev => prev.filter(s => s.id !== store))
-  }
-
+    setStores((prev) => prev.filter((s) => s.id !== store));
+  };
+  const deleteProductFromStore = (productId: string) => {
+    setStores((prev) =>
+      prev.map((store) => ({
+        ...store,
+        products: store.products.filter((product) => product.id !== productId),
+      })),
+    );
+  };
   useEffect(() => {
-    
     console.log("Stores updated:", stores);
     localStorage.setItem("saveStore", JSON.stringify(stores));
   }, [stores]);
   return (
-    <StoreContext.Provider value={{ stores, addStore, setStores, editingStore, deleteStore }}>
+    <StoreContext.Provider value={{ stores, addStore, setStores, editingStore, deleteStore, deleteProductFromStore}}>
       {children}
     </StoreContext.Provider>
   );

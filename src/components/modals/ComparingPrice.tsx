@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
 import { ProductContext } from "../../context/products/ProductsContext";
-import { X } from "lucide-react";
+import { ShoppingCart, X } from "lucide-react";
 import { StoreContext } from "../../context/store/StoreContext";
+import { CartContext } from "../../context/cart/CartContext";
 
 type ComparingPriceModel = {
   name: string;
@@ -11,6 +12,7 @@ type ComparingPriceModel = {
 const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
   const { products } = useContext(ProductContext)!;
   const { stores } = useContext(StoreContext)!;
+  const { addCartItem, clearCart } = useContext(CartContext)!;
   const productName = products.filter(
     (p) => p.name.toLocaleLowerCase() === name.toLocaleLowerCase(),
   );
@@ -19,6 +21,17 @@ const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
   const productComparedList = [...productName].sort((a, b) =>
     category === "lowest" ? a.price - b.price : b.price - a.price,
   );
+  const [choosingProduct, setChoosingProduct] = useState("");
+  const lowestPrice = Math.min(...productName.map((p) => p.price));
+  const highestPrice = Math.max(...productName.map((p) => p.price));
+  const saves = highestPrice - lowestPrice;
+
+  const handleAddCart = () => {
+    addCartItem(choosingProduct, 1);
+    setChoosingProduct("")
+    onClose()
+  }
+
   console.log("Products", productName);
   return (
     <main className="w-full flex flex-col">
@@ -31,8 +44,8 @@ const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
               {name} • {productName.length} Stores Tracking.
             </p>
           </div>
-          <div className="bg-(--bg-button) p-2 rounded-2xl">
-            <X onClick={() => onClose()} />
+          <div onClick={() => onClose()} className="bg-(--bg-button) p-2 rounded-2xl">
+            <X />
           </div>
         </div>
         {/* Compared Price */}
@@ -40,11 +53,11 @@ const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
           <div className="w-full flex items-center justify-between bg-(--bg-button) px-2 py-4 rounded-xl">
             <div className="w-full flex flex-col justify-center border-r border-(--border-light) px-2">
               <span className="text-[12px] text-(--text-muted)">LOWEST PRICE</span>
-              <span className="text-[22px] font-bold">₱20.00</span>
+              <span className="text-[22px] font-bold">₱{lowestPrice.toFixed(2)}</span>
             </div>
             <div className="w-full flex flex-col justify-center text-end border-l border-(--border-light) px-2">
               <span className="text-[12px] text-(--text-muted)">YOU COULD SAVE</span>
-              <span className="text-[22px] font-bold">₱7.00</span>
+              <span className="text-[22px] font-bold">₱{saves.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -64,24 +77,42 @@ const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
           </button>
         </div>
         {/* Compared List */}
-        {productComparedList.map((p) => {
+        {productComparedList.map((p, i) => {
+          const targetStore = stores.find((s) => s.id === p.storebelong);
           return (
-            <div className="w-full flex items-center px-4 pb-4">
-              <div className="w-full flex items-center bg-(--bg-button) h-16 border border-emerald-300 p-2 rounded-2xl">
+            <div
+              key={p.id}
+              className="w-full flex items-center px-4 pb-4"
+              onClick={() => setChoosingProduct(p.id)}
+            >
+              <div
+                className={`w-full flex items-center bg-(--bg-button) h-16 border p-2 rounded-2xl ${choosingProduct === p.id ? "border-emerald-300" : "border-(--border-light)"}`}
+              >
                 <div className="flex pr-2">
                   <span className="bg-(--primary-color) w-7 h-7 text-[12px] rounded-full flex items-center justify-center">
-                    1
+                    {i + 1}
                   </span>
                 </div>
                 <div className="flex flex-col flex-1 gap-1">
                   <div className="flex text-[13px] gap-1">
-                    <span className="font-bold">{p.storebelong}</span>
-                    <div className="bg-emerald-300 text-[10px] text-(--primary-bg) font-bold flex items-center rounded px-1">
-                      <span>BEST</span>
-                    </div>
-                    <span className="flex bg-violet-1100 text-[10px] text-violet-300 font-bold items-center rounded px-1 border border-violet-500">
-                      Selected
-                    </span>
+                    <span className="font-bold">{targetStore?.name}</span>
+                    {i === 0 &&
+                      (category === "lowest" ? (
+                        <div className="bg-emerald-300 text-[10px] text-(--primary-bg) font-bold flex items-center rounded px-1">
+                          <span>BEST</span>
+                        </div>
+                      ) : (
+                        <div className="bg-red-300 text-[10px] text-(--primary-bg) font-bold flex items-center rounded px-1">
+                          <span>HIGHEST</span>
+                        </div>
+                      ))}
+                    {choosingProduct === p.id ? (
+                      <span className="flex bg-violet-1100 text-[10px] text-violet-300 font-bold items-center rounded px-1 border border-violet-500">
+                        Selected
+                      </span>
+                    ) : (
+                      ""
+                    )}
                   </div>
                   <div className="text-(--text-muted) text-[12px]">
                     <span>10/10/2026</span>
@@ -97,6 +128,13 @@ const ComparingPrice = ({ name, onClose }: ComparingPriceModel) => {
             </div>
           );
         })}
+        {/* Add to Cart button */}
+        <div className="px-4 pb-4 ">
+          <div className="w-full flex items-center justify-center gap-4 bg-(--primary-color) p-4 rounded-2xl" onClick={handleAddCart}>
+            <ShoppingCart />
+            <span>Add to Cart</span>
+          </div>
+        </div>
       </div>
     </main>
   );

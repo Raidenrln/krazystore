@@ -80,7 +80,7 @@ const Stores = () => {
           </div>
           <button
             onClick={() => handleOpenAddStore()}
-            className="bg-(--primary-color) text-(--bg-panel) px-4 h-10 rounded-lg font-semibold text-[13px] flex items-center gap-2"
+            className="bg-(--primary-color) text-(--bg-panel) px-4 h-10 rounded-lg font-semibold text-[13px] flex items-center gap-2 cursor-pointer"
           >
             <Plus size={20} />
             <span className="max-[411px]:hidden">Add Store</span>
@@ -107,10 +107,10 @@ const Stores = () => {
               <span className="text-[13px]">All</span>
             </div>
             <div
-              className={` w-auto px-4 py-1 rounded-full border border-(--border-light) cursor-pointer ${activeTab === "open" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+              className={`w-auto px-4 py-1 rounded-full border border-(--border-light) cursor-pointer ${activeTab === "open" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
               onClick={() => setActiveTab("open")}
             >
-              <span className="text-[13px]">Open</span>
+              <span className="text-[13px] ">Open</span>
             </div>
             {storeCategories.map((s) => {
               return (
@@ -153,7 +153,7 @@ const Stores = () => {
                   <div className="flex gap-3">
                     <Pencil
                       size={18}
-                      className="text-(--text-muted)"
+                      className="text-(--text-muted) cursor-pointer"
                       onClick={() => {
                         handleEditing(s.id);
                         setShowNavbar(false);
@@ -161,7 +161,7 @@ const Stores = () => {
                     />
                     <Trash
                       size={18}
-                      className="text-(--text-muted)"
+                      className="text-(--text-muted) cursor-pointer"
                       onClick={() => deleteStore(s.id)}
                     />
                   </div>

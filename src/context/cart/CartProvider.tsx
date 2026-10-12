@@ -9,6 +9,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const addCartItem = (id: string, quantity: number) => {
+    if(id === '') return
     setCartItem((prev) => {
       const existingItem = prev.find((item) => item.id === id);
 
@@ -30,8 +31,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const decreaseQuantity = (id: string) => {
     setCartItem((prev) =>
       prev
-        .map((item) => (item.id === id ? { ...item, quantity: item.quantity - 1 } : item))
-        .filter((item) => item.quantity > 0),
+        .map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item))
     );
   };
 

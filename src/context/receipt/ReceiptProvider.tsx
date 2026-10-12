@@ -14,13 +14,15 @@ export const ReceiptProvider = ({ children }: { children: ReactNode }) => {
     setReceipt((prev) => [...prev, newReceipt]);
     clearCart();
   };
-
+  const removeReceipt = (receiptId: string) => {
+    setReceipt(prev => prev.filter(p => p.id !== receiptId));
+  }
   useEffect(() => {
     localStorage.setItem("savingReceipts", JSON.stringify(receipt));
     console.log("Receipt:", receipt);
   }, [receipt]);
 
   return (
-    <ReceiptContext.Provider value={{ receipt, addReceipt }}>{children}</ReceiptContext.Provider>
+    <ReceiptContext.Provider value={{ receipt, addReceipt, removeReceipt }}>{children}</ReceiptContext.Provider>
   );
 };

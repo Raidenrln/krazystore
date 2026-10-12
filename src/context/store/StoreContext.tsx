@@ -8,6 +8,7 @@ export type StoreContextType = {
   addStore: (newStore: StoreModel) => void;
   editingStore: (storeId: string, store: EditedStore) => void;
   deleteStore: (storeId: string) => void;
+  deleteProductFromStore: (productId: string) => void;
 };
 
 export const StoreContext = createContext<StoreContextType | null>(null);

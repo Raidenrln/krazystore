@@ -14,7 +14,7 @@ interface NavbarContextType {
 }
 
 const Products = () => {
-  const { products } = useContext(ProductContext)!;
+  const { products, deleteProduct } = useContext(ProductContext)!;
   const { stores } = useContext(StoreContext)!;
   const { addCartItem } = useContext(CartContext)!;
   const { setShowNavbar } = useOutletContext<NavbarContextType>();
@@ -83,7 +83,7 @@ const Products = () => {
           </div>
           <button
             onClick={() => handleOpenAddProduct()}
-            className="bg-(--primary-color) text-(--bg-panel) px-3 h-10 rounded-lg font-semibold text-[13px] flex items-center gap-2"
+            className="bg-(--primary-color) text-(--bg-panel) px-3 h-10 rounded-lg font-semibold text-[13px] flex items-center gap-2 cursor-pointer"
           >
             <Plus size={20} /> <span className="max-[508px]:hidden">Add Product</span>
           </button>
@@ -105,12 +105,12 @@ const Products = () => {
               className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === "all" ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
               onClick={() => setActiveTab("all")}
             >
-              <span className="text-[13px]">All</span>
+              <span className="text-[13px] cursor-pointer">All</span>
             </div>
             {productCategories.map((p) => (
               <div
                 key={p.id}
-                className={` w-auto px-4 py-1 rounded-full border border-(--border-light) ${activeTab === p.name ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
+                className={` w-auto px-4 py-1 rounded-full border border-(--border-light) cursor-pointer ${activeTab === p.name ? "bg-(--primary-color) text-white" : "bg-(--bg-panel) text-gray-400 hover:text-white"}`}
                 onClick={() => setActiveTab(p.name)}
               >
                 <span className="text-[13px]">{p.name}</span>
@@ -146,22 +146,22 @@ const Products = () => {
                   <span>{e.dateCreated}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button className="bg-(--bg-button) p-2 rounded-xl" onClick={() => handleComparingPrice(e.name)}>
+                  <button className="bg-(--bg-button) p-2 rounded-xl cursor-pointer" onClick={() => handleComparingPrice(e.name)}>
                     <Scale size={16} />
                   </button>
                   <button
                     onClick={() => addCartItem(e.id, 1)}
-                    className="bg-(--bg-button) p-2 rounded-xl"
+                    className="bg-(--bg-button) p-2 rounded-xl cursor-pointer"
                   >
                     <ShoppingCart size={16} />
                   </button>
                   <button
-                    className="bg-(--bg-button) p-2 rounded-xl"
+                    className="bg-(--bg-button) p-2 rounded-xl cursor-pointer"
                     onClick={() => handleEditProduct(e.id)}
                   >
                     <PenLine size={16} />
                   </button>
-                  <button className="bg-(--bg-button) p-2 rounded-xl">
+                  <button className="bg-(--bg-button) p-2 rounded-xl cursor-pointer"onClick={() => deleteProduct(e.id)}>
                     <Trash size={16} color="red" />
                   </button>
                 </div>

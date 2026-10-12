@@ -11,7 +11,7 @@ interface NavbarContextType {
 
 const Expenses = () => {
   const { products } = useContext(ProductContext)!;
-  const { receipt } = useContext(ReceiptContext)!;
+  const { receipt, removeReceipt } = useContext(ReceiptContext)!;
   const [showDetails, setShowDetails] = useState(false);
   const { setShowNavbar } = useOutletContext<NavbarContextType>();
   const [receiptId, setReceiptId] = useState("");
@@ -66,7 +66,7 @@ const Expenses = () => {
 
                   <Eye onClick={() => handleShowDetails(r.id)} size={16} className="text-(--text-muted)" />
 
-                  <Trash size={16} className="text-(--text-muted)" />
+                  <Trash size={16} className="text-(--text-muted)" onClick={() => removeReceipt(r.id)}/>
                 </div>
               </div>
             );

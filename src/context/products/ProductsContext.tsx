@@ -6,6 +6,7 @@ export interface ProductContextModel {
   products: ProductModel[];
   addingProduct: (newProduct: ProductModel, storeId: string) => void;
   editingProduct: (productId: string, targetProduct: EditingProductModel) => void;
+  deleteProduct: (productId: string) => void;
 }
 
 export const ProductContext = createContext<ProductContextModel | null>(null);

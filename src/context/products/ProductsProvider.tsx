@@ -12,6 +12,7 @@ export type EditingProductModel = {
 };
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
+  const { deleteProductFromStore } = useContext(StoreContext)!;
   const [products, setProducts] = useState<ProductModel[]>(() =>  {
     const savingProducts = localStorage.getItem("savedProducts");
     return savingProducts ? JSON.parse(savingProducts) : []});
@@ -45,12 +46,18 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const deleteProduct = (productId: string) => {
+  deleteProductFromStore(productId)
+
+  setProducts((prev) => prev.filter((p) => p.id !== productId));
+};
+
   useEffect(() => {
     localStorage.setItem("savedProducts", JSON.stringify(products))
     console.log("Products:", products);
   }, [products]);
   return (
-    <ProductContext.Provider value={{ products, addingProduct, editingProduct }}>
+    <ProductContext.Provider value={{ products, addingProduct, editingProduct, deleteProduct }}>
       {children}
     </ProductContext.Provider>
   );

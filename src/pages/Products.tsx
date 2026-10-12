@@ -25,6 +25,7 @@ const Products = () => {
   const [productEdit, setProductEdit] = useState(false);
   const [targetProduct, setTargetProduct] = useState("");
   const [comparingPrice, setComparingPrice] = useState(false);
+  const [targetComparedPrice, setTargetComparedPrice] = useState("")
   const [productNameCompare, setProductNameCompared] = useState("");
   const handleOpenAddProduct = () => {
     setIsAddingProductOpen(true);
@@ -146,7 +147,7 @@ const Products = () => {
                   <span>{e.dateCreated}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button className="bg-(--bg-button) p-2 rounded-xl cursor-pointer" onClick={() => handleComparingPrice(e.name)}>
+                  <button className="bg-(--bg-button) p-2 rounded-xl cursor-pointer" onClick={() => {handleComparingPrice(e.name); setTargetComparedPrice(e.id)}}>
                     <Scale size={16} />
                   </button>
                   <button
@@ -185,7 +186,7 @@ const Products = () => {
       {/* Comparing Product Modal */}
       {comparingPrice && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
-          <ComparingPrice name={productNameCompare} onClose={handleOpenComparingPrice}/>
+          <ComparingPrice name={productNameCompare} onClose={handleOpenComparingPrice} targetProduct={targetComparedPrice}/>
         </div>
       )}  
     </main>

@@ -7,6 +7,7 @@ import { StoreContext } from "../context/store/StoreContext";
 import { CartContext } from "../context/cart/CartContext";
 import { CategoryContext } from "../context/category/CategoryContext";
 import EditingProduct from "../components/modals/EditingProduct";
+import ComparingPrice from "../components/modals/ComparingPrice";
 
 interface NavbarContextType {
   setShowNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +24,8 @@ const Products = () => {
   const [searchValue, setSearchValue] = useState("");
   const [productEdit, setProductEdit] = useState(false);
   const [targetProduct, setTargetProduct] = useState("");
+  const [comparingPrice, setComparingPrice] = useState(false);
+  const [productNameCompare, setProductNameCompared] = useState("");
   const handleOpenAddProduct = () => {
     setIsAddingProductOpen(true);
     setShowNavbar(false);
@@ -38,6 +41,15 @@ const Products = () => {
   const handleCloseEdit = () => {
     setProductEdit(false);
   };
+  const handleComparingPrice = (e: string) => {
+    setProductNameCompared(e)
+    setComparingPrice(true)
+    setShowNavbar(false);
+  }
+  const handleOpenComparingPrice = () => {
+    setComparingPrice(false)
+    setShowNavbar(true);
+  }
   const filteredProduct = products.filter((product) => {
     const matchesCategory = activeTab === "all" || activeTab === product.category;
     const matchesSearch = product.name
@@ -134,7 +146,7 @@ const Products = () => {
                   <span>{e.dateCreated}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button className="bg-(--bg-button) p-2 rounded-xl">
+                  <button className="bg-(--bg-button) p-2 rounded-xl" onClick={() => handleComparingPrice(e.name)}>
                     <Scale size={16} />
                   </button>
                   <button
@@ -170,6 +182,12 @@ const Products = () => {
           <EditingProduct productId={targetProduct} onClose={handleCloseEdit} />
         </div>
       )}
+      {/* Comparing Product Modal */}
+      {comparingPrice && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm">
+          <ComparingPrice name={productNameCompare} onClose={handleOpenComparingPrice}/>
+        </div>
+      )}  
     </main>
   );
 };

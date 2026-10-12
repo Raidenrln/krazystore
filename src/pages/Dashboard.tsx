@@ -1,9 +1,49 @@
 import { Box, LockKeyholeOpen, ReceiptTextIcon, Store } from "lucide-react";
 import { useContext } from "react";
 import { StoreContext } from "../context/store/StoreContext";
+import { ProductContext } from "../context/products/ProductsContext";
+import { ReceiptContext } from "../context/receipt/ReceiptContext";
 
 const Dashboard = () => {
   const { stores } = useContext(StoreContext)!;
+  const { products } = useContext(ProductContext)!;
+  const { receipt } = useContext(ReceiptContext)!;
+
+  const totalExpenses = receipt.reduce((total, r) => {
+    const receiptTotal = r.products.reduce((subtotal, item) => {
+      const productFind = products.find((p) => p.id === item.id);
+
+      return subtotal + (productFind?.price ?? 0) * item.quantity;
+    }, 0);
+
+    return total + receiptTotal;
+  }, 0);
+
+  console.log(totalExpenses);
+
+  const hoursToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const isStoreOpen = (openTime: string, closeTime: string) => {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    const open = hoursToMinutes(openTime);
+    const close = hoursToMinutes(closeTime);
+
+    if (open <= close) {
+      return currentTime >= open && currentTime < close;
+    } else {
+      return currentTime >= open || currentTime < close;
+    }
+  };
+
+  const data = stores.filter((s) => isStoreOpen(s.opentime, s.closetime));
+
+  console.log("adas", data);
+
   return (
     <main className="min-h-screen w-full flex flex-col">
       {/* Mobile devices Dashboard */}
@@ -37,7 +77,7 @@ const Dashboard = () => {
                 <span className="text-[15px] text-[#9DAABBD]">Opened stores</span>
                 <span className="text-[12px] text-(--text-muted)">open right now</span>
               </div>
-              <span className="text-[17px]">1</span>
+              <span className="text-[17px]">{data.length}</span>
             </div>
           </div>
           <div className="w-full gap-4 flex bg-(--bg-panel) items-center p-4 rounded-2xl border border-[#2A2E3D]">
@@ -49,7 +89,7 @@ const Dashboard = () => {
                 <span className="text-[15px] text-[#9DAABBD]">Total Products Tracked</span>
                 <span className="text-[12px] text-(--text-muted)">price records</span>
               </div>
-              <span className="text-[17px]">1</span>
+              <span className="text-[17px]">{products.length}</span>
             </div>
           </div>
           <div className="w-full gap-4 flex bg-(--bg-panel) items-center p-4 rounded-2xl border border-[#2A2E3D]">
@@ -61,7 +101,7 @@ const Dashboard = () => {
                 <span className="text-[15px] text-[#9DAABBD]">Total Expenses</span>
                 <span className="text-[12px] text-(--text-muted)">5 receipts</span>
               </div>
-              <span className="text-[17px]">₱50</span>
+              <span className="text-[17px]">₱{totalExpenses}</span>
             </div>
           </div>
         </div>
